@@ -8,6 +8,8 @@ import { deliveryFeeFor } from "@/lib/delivery";
 import { useBasket } from "./BasketProvider";
 import { useOnline } from "./useOnline";
 import { validateBasket, type ValidationResult } from "@/lib/client-api";
+import { productHref } from "@/lib/product";
+import { asset } from "@/lib/paths";
 
 export function BasketView({ delivery }: { delivery: DeliverySettings }) {
   const b = useBasket();
@@ -31,9 +33,10 @@ export function BasketView({ delivery }: { delivery: DeliverySettings }) {
         const fresh = r.snapshots.filter(Boolean) as NonNullable<(typeof r.snapshots)[number]>[];
         const changed = fresh.filter((s) => {
           const cur = b.items.find((i) => i.productId === s.productId && i.variantId === s.variantId);
-          return cur && (cur.priceCents !== s.priceCents || cur.name !== s.name || cur.image !== s.image);
+          return cur && (cur.priceCents !== s.priceCents || cur.name !== s.name || cur.variantName !== s.variantName);
         });
-        if (changed.length) b.refresh(changed);
+        if (changed.length)
+          b.refresh(changed.map((c) => ({ productId: c.productId, variantId: c.variantId, name: c.name, variantName: c.variantName, priceCents: c.priceCents, slug: c.slug })));
       } catch {
         if (!cancel) setCheckFailed(true);
       } finally {
@@ -55,7 +58,7 @@ export function BasketView({ delivery }: { delivery: DeliverySettings }) {
         <p className="eyebrow">Basket</p>
         <h1>Your basket is empty</h1>
         <p className="muted">Add something you’ve been missing.</p>
-        <Link href="/shop" className="btn">
+        <Link href="/shop/" className="btn">
           Start shopping
         </Link>
       </div>
@@ -83,14 +86,14 @@ export function BasketView({ delivery }: { delivery: DeliverySettings }) {
             const max = line ? Math.min(50, line.available) : issue?.availableQty ?? 50;
             return (
               <div className="line" key={`${it.productId}:${it.variantId}`}>
-                <Link href={`/product/${it.slug}`} className="line-img">
+                <Link href={productHref(it.slug)} className="line-img">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={it.image ?? "/placeholders/product-1.svg"} alt="" loading="lazy" />
+                  <img src={asset(it.image ?? "/placeholders/product-1.svg")} alt="" loading="lazy" />
                 </Link>
                 <div className="line-body">
                   <div className="line-top">
                     <div>
-                      <Link href={`/product/${it.slug}`} className="line-name">
+                      <Link href={productHref(it.slug)} className="line-name">
                         {it.name}
                       </Link>
                       {it.variantName && <p className="small muted">{it.variantName}</p>}
@@ -141,7 +144,7 @@ export function BasketView({ delivery }: { delivery: DeliverySettings }) {
             );
           })}
           <p style={{ marginTop: 24 }}>
-            <Link href="/shop" className="link small">
+            <Link href="/shop/" className="link small">
               Continue shopping
             </Link>
           </p>
@@ -176,7 +179,7 @@ export function BasketView({ delivery }: { delivery: DeliverySettings }) {
             </p>
           ) : null}
           <Link
-            href="/checkout"
+            href="/checkout/"
             className="btn btn-block"
             aria-disabled={blocking}
             onClick={(e) => blocking && e.preventDefault()}

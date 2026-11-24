@@ -13,8 +13,9 @@ See [ARCHITECTURE.md](ARCHITECTURE.md) for the full design, costs and limits.
 |---|---|
 | 0. Architecture | ✅ |
 | 1. PocketBase backend (schema, access rules, orders, stock, 47 tests) | ✅ |
-| 2. Frontend connected to PocketBase, IndexedDB, Tailwind, bottom navigation | In progress — the frontend does not build yet |
-| 3–7. Accounts UI, checkout, admin, PWA/offline, hosting kit | Planned |
+| 2. Frontend connected to PocketBase, IndexedDB, Tailwind, bottom navigation, GitHub Pages deploy | ✅ |
+| 3. Customer accounts UI | Next |
+| 4–7. Checkout, admin, PWA/offline, hosting kit | Planned |
 
 ## Run the backend
 
@@ -23,3 +24,13 @@ See [backend/README.md](backend/README.md).
 ## Never commit
 
 `backend/pb_data/` (your live database and uploads), `.env.local`, or the `pocketbase` binary. All of these are already in `.gitignore`.
+
+## Live storefront (GitHub Pages)
+
+Every push to `main` builds the storefront and publishes it to https://tamanitadiwa-coder.github.io/mamaejima/.
+
+**One-time setup:**
+1. Go to **Settings → Pages → Build and deployment → Source** and choose **GitHub Actions**.
+2. Once PocketBase is reachable online, go to **Settings → Secrets and variables → Actions → Variables** and add a variable named `PB_URL` (for example `https://api.yourdomain.co.za`). Then re-run the workflow.
+
+Until `PB_URL` is set, the site shows its design and a "being set up" message instead of products.

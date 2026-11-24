@@ -2,8 +2,10 @@
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import type { BasketItem } from "@/lib/types";
+import { idbGet, idbSet } from "@/lib/idb";
 
-const KEY = "me.basket.v1";
+const KEY = "basket.v1";
+const LEGACY_KEY = "me.basket.v1";
 
 interface BasketCtx {
   items: BasketItem[];
@@ -29,30 +31,48 @@ export function BasketProvider({ children }: { children: React.ReactNode }) {
   const [ready, setReady] = useState(false);
   const [toast, setToast] = useState<{ text: string; key: number } | null>(null);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const channel = useRef<BroadcastChannel | null>(null);
+  const fromChannel = useRef(false);
 
+  // Load from IndexedDB (migrating any older localStorage basket once).
   useEffect(() => {
-    try {
-      const raw = localStorage.getItem(KEY);
-      if (raw) setItems(JSON.parse(raw));
-    } catch {}
-    setReady(true);
-    // Keep tabs in sync
-    const onStorage = (e: StorageEvent) => {
-      if (e.key === KEY) {
+    let alive = true;
+    (async () => {
+      let saved = await idbGet<BasketItem[]>(KEY);
+      if (!saved) {
         try {
-          setItems(e.newValue ? JSON.parse(e.newValue) : []);
+          const legacy = localStorage.getItem(LEGACY_KEY);
+          if (legacy) {
+            saved = JSON.parse(legacy);
+            localStorage.removeItem(LEGACY_KEY);
+          }
         } catch {}
       }
+      if (alive && Array.isArray(saved)) setItems(saved);
+      if (alive) setReady(true);
+    })();
+    // Keep other open tabs in sync
+    let bc: BroadcastChannel | null = null;
+    try {
+      bc = new BroadcastChannel("me-basket");
+      bc.onmessage = (e) => {
+        if (!Array.isArray(e.data)) return;
+        fromChannel.current = true;
+        setItems(e.data);
+      };
+    } catch {}
+    channel.current = bc;
+    return () => {
+      alive = false;
+      bc?.close();
     };
-    window.addEventListener("storage", onStorage);
-    return () => window.removeEventListener("storage", onStorage);
   }, []);
 
   useEffect(() => {
     if (!ready) return;
-    try {
-      localStorage.setItem(KEY, JSON.stringify(items));
-    } catch {}
+    idbSet(KEY, items);
+    if (!fromChannel.current) channel.current?.postMessage(items);
+    fromChannel.current = false;
   }, [items, ready]);
 
   const showToast = useCallback((text: string) => {

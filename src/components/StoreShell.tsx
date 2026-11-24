@@ -7,37 +7,36 @@ import { BasketProvider, useBasket } from "./BasketProvider";
 import { InstallProvider, useInstall } from "./InstallProvider";
 import { useOnline } from "./useOnline";
 import { BagIcon, CloseIcon, MenuIcon, SearchIcon, Mark } from "./Icons";
+import { CatalogProvider, useCatalog } from "./CatalogProvider";
+import { Footer } from "./Footer";
+import { BottomNav } from "./BottomNav";
 
-interface ShellProps {
-  announcement: string | null;
-  children: React.ReactNode;
-  footer: React.ReactNode;
-}
-
-export function StoreShell({ announcement, children, footer }: ShellProps) {
+export function StoreShell({ children }: { children: React.ReactNode }) {
   return (
     <InstallProvider>
-      <BasketProvider>
-        <ServiceWorker />
-        <Splash />
-        <OfflineBar />
-        {announcement && <div className="announce">{announcement}</div>}
-        <Header />
-        <main id="main">{children}</main>
-        {footer}
-        <Toast />
-      </BasketProvider>
+      <CatalogProvider>
+        <BasketProvider>
+          <Splash />
+          <OfflineBar />
+          <Announcement />
+          <Header />
+          <main id="main" className="pb-[calc(64px+env(safe-area-inset-bottom))] lg:pb-0">
+            {children}
+          </main>
+          <Footer />
+          <BottomNav />
+          <Toast />
+        </BasketProvider>
+      </CatalogProvider>
     </InstallProvider>
   );
 }
 
-function ServiceWorker() {
-  useEffect(() => {
-    if (!("serviceWorker" in navigator)) return;
-    if (process.env.NODE_ENV !== "production") return;
-    navigator.serviceWorker.register("/sw.js", { scope: "/" }).catch(() => {});
-  }, []);
-  return null;
+function Announcement() {
+  const { catalog } = useCatalog();
+  const s = catalog?.settings;
+  if (!s?.announcementActive || !s.announcement.trim()) return null;
+  return <div className="announce">{s.announcement}</div>;
 }
 
 /** Branded launch screen; visible only when opened from the Home Screen (see layout head script). */

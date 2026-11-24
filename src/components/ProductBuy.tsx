@@ -4,6 +4,7 @@ import { useState } from "react";
 import type { Product } from "@/lib/types";
 import { formatZAR } from "@/lib/money";
 import { useBasket } from "./BasketProvider";
+import { productImages } from "@/lib/product";
 
 export function ProductBuy({ product }: { product: Product }) {
   const { add, items, showToast } = useBasket();
@@ -36,7 +37,7 @@ export function ProductBuy({ product }: { product: Product }) {
         name: product.name,
         variantName: variant?.name ?? null,
         priceCents: price,
-        image: product.images[0] ?? null,
+        image: productImages(product)[0] ?? null,
         slug: product.slug,
       },
       q,

@@ -1,14 +1,15 @@
 import Link from "next/link";
 import type { Category, Product } from "@/lib/types";
 import { formatZAR } from "@/lib/money";
-import { fromPrice, isInStock } from "@/lib/product";
+import { fromPrice, isInStock, productHref, productImages } from "@/lib/product";
+import { asset } from "@/lib/paths";
 
 export function ProductCard({ product, category, priority }: { product: Product; category?: Category; priority?: boolean }) {
   const price = fromPrice(product);
   const inStock = isInStock(product);
-  const img = product.images[0] ?? "/placeholders/product-1.svg";
+  const img = asset(productImages(product)[0]);
   return (
-    <Link href={`/product/${product.slug}`} className="card">
+    <Link href={productHref(product.slug)} className="card">
       <div className="card-media">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src={img} alt={product.name} loading={priority ? "eager" : "lazy"} decoding="async" />

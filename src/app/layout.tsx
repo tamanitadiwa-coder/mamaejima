@@ -4,21 +4,22 @@ import "@fontsource/cormorant-garamond/600.css";
 import "@fontsource/cormorant-garamond/500-italic.css";
 import "@fontsource-variable/instrument-sans";
 import "./globals.css";
+import { asset } from "@/lib/paths";
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"),
   title: { default: "Mama Ejima — Zimbabwean groceries in Cape Town", template: "%s · Mama Ejima" },
   description:
     "Zimbabwean favourites, traditional ingredients and everyday essentials. Delivered across Cape Town every Monday.",
   applicationName: "Mama Ejima",
+  manifest: asset("/manifest.webmanifest"),
   appleWebApp: { capable: true, title: "Mama Ejima", statusBarStyle: "default" },
   formatDetection: { telephone: false },
   icons: {
     icon: [
-      { url: "/icons/favicon-32.png", sizes: "32x32", type: "image/png" },
-      { url: "/icons/icon.svg", type: "image/svg+xml" },
+      { url: asset("/icons/favicon-32.png"), sizes: "32x32", type: "image/png" },
+      { url: asset("/icons/icon.svg"), type: "image/svg+xml" },
     ],
-    apple: [{ url: "/icons/apple-touch-icon.png", sizes: "180x180" }],
+    apple: [{ url: asset("/icons/apple-touch-icon.png"), sizes: "180x180" }],
   },
 };
 

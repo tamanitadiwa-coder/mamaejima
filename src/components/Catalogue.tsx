@@ -1,7 +1,9 @@
+"use client";
+
 import Link from "next/link";
 import type { Category, Product } from "@/lib/types";
 import { ProductCard } from "./ProductCard";
-import { fromPrice, isInStock } from "@/lib/product";
+import { categoryHref, fromPrice, isInStock } from "@/lib/product";
 import { SearchIcon } from "./Icons";
 
 const SORTS = [
@@ -31,15 +33,17 @@ export function Catalogue({
   categories,
   activeCategory,
   sort,
+  unknownCategory,
 }: {
   products: Product[];
   categories: Category[];
   activeCategory: Category | null;
   sort?: string;
+  unknownCategory?: boolean;
 }) {
   const catById = new Map(categories.map((c) => [c.id, c]));
   const list = sortProducts(products, sort);
-  const base = activeCategory ? `/shop/${activeCategory.slug}` : "/shop";
+  const base = activeCategory ? categoryHref(activeCategory.slug) : "/shop/";
 
   return (
     <div className="wrap">
@@ -53,7 +57,7 @@ export function Catalogue({
         )}
       </div>
 
-      <form action="/search" className="row" style={{ marginBottom: 16, gap: 0 }} role="search">
+      <form action={`${process.env.NEXT_PUBLIC_BASE_PATH || ""}/search/`} className="row" style={{ marginBottom: 16, gap: 0 }} role="search">
         <label htmlFor="shop-q" className="sr-only">
           Search products
         </label>
@@ -64,13 +68,13 @@ export function Catalogue({
       </form>
 
       <nav className="chips" aria-label="Categories" style={{ marginBottom: 20 }}>
-        <Link href="/shop" className="chip" aria-current={!activeCategory ? "page" : undefined}>
+        <Link href="/shop/" className="chip" aria-current={!activeCategory ? "page" : undefined}>
           All
         </Link>
         {categories.map((c) => (
           <Link
             key={c.id}
-            href={`/shop/${c.slug}`}
+            href={categoryHref(c.slug)}
             className="chip"
             aria-current={activeCategory?.id === c.id ? "page" : undefined}
           >
@@ -86,11 +90,14 @@ export function Catalogue({
         <SortSelect base={base} sort={sort} />
       </div>
 
+      {unknownCategory && (
+        <p className="notice notice-warn small" style={{ marginBottom: 20 }}>That category no longer exists. Showing everything.</p>
+      )}
       {list.length === 0 ? (
         <div className="empty">
           <h2>Nothing here yet</h2>
           <p className="muted">New products are added regularly.</p>
-          <Link href="/shop" className="btn btn-outline">
+          <Link href="/shop/" className="btn btn-outline">
             See all products
           </Link>
         </div>
@@ -112,7 +119,7 @@ function SortSelect({ base, sort }: { base: string; sort?: string }) {
       {SORTS.map((s) => (
         <Link
           key={s.v}
-          href={s.v ? `${base}?sort=${s.v}` : base}
+          href={s.v ? `${base}${base.includes("?") ? "&" : "?"}sort=${s.v}` : base}
           style={{
             borderBottom: (sort ?? "") === s.v ? "1px solid var(--ink)" : "1px solid transparent",
             color: (sort ?? "") === s.v ? "var(--ink)" : "var(--muted)",

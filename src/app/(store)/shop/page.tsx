@@ -1,11 +1,28 @@
-import type { Metadata } from "next";
-import { getCatalog } from "@/server/catalog";
+"use client";
+
+import { Suspense } from "react";
+import { useSearchParams } from "next/navigation";
+import { useCatalog } from "@/components/CatalogProvider";
+import { CatalogState } from "@/components/CatalogState";
 import { Catalogue } from "@/components/Catalogue";
 
-export const metadata: Metadata = { title: "Shop" };
+function ShopInner() {
+  const params = useSearchParams();
+  const c = params.get("c");
+  const sort = params.get("sort") ?? undefined;
+  const { catalog } = useCatalog();
+  if (!catalog) return null;
+  const cat = c ? catalog.categories.find((x) => x.slug === c) ?? null : null;
+  const products = cat ? catalog.products.filter((p) => p.categoryId === cat.id) : catalog.products;
+  return <Catalogue products={products} categories={catalog.categories} activeCategory={cat} sort={sort} unknownCategory={!!c && !cat} />;
+}
 
-export default async function ShopPage({ searchParams }: { searchParams: Promise<{ sort?: string }> }) {
-  const { products, categories } = await getCatalog();
-  const { sort } = await searchParams;
-  return <Catalogue products={products} categories={categories} activeCategory={null} sort={sort} />;
+export default function ShopPage() {
+  return (
+    <CatalogState>
+      <Suspense>
+        <ShopInner />
+      </Suspense>
+    </CatalogState>
+  );
 }

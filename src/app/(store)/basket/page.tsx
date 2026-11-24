@@ -1,10 +1,10 @@
-import type { Metadata } from "next";
-import { store } from "@/server/store";
+"use client";
+
+import { useCatalog } from "@/components/CatalogProvider";
 import { BasketView } from "@/components/BasketView";
+import { DEFAULT_DELIVERY } from "@/lib/defaults";
 
-export const metadata: Metadata = { title: "Basket" };
-
-export default async function BasketPage() {
-  const settings = await store.getSettings();
-  return <BasketView delivery={settings.delivery} />;
+export default function BasketPage() {
+  const { catalog } = useCatalog();
+  return <BasketView delivery={catalog?.settings.delivery ?? DEFAULT_DELIVERY} />;
 }

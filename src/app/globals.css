@@ -1,3 +1,20 @@
+@import "tailwindcss";
+
+/* Tailwind theme mapped onto the Mama Ejima tokens below */
+@theme {
+  --color-ivory: #f6f1e8;
+  --color-paper: #fbf8f2;
+  --color-sand: #ece3d4;
+  --color-ink: #1a1714;
+  --color-charcoal: #2b2622;
+  --color-earth: #5a3e2b;
+  --color-earth-deep: #3b2a1e;
+  --color-bronze: #9c7a4e;
+  --font-serif: "Cormorant Garamond", Georgia, serif;
+  --font-sans: "Instrument Sans Variable", system-ui, sans-serif;
+  --radius-sm: 2px;
+}
+
 /* ─────────────────────────────────────────────────────────────
    Mama Ejima — design system
    Flat, architectural, editorial. No glass, no gradients,
@@ -463,4 +480,13 @@ p { margin: 0; }
 html.standalone .splash { display: flex; }
 @media (max-width: 899px) {
   .toast { bottom: auto; top: calc(var(--header-h) + 12px); }
+}
+
+/* Mobile: product buy bar sits just above the bottom tab bar */
+@media (max-width: 1023px) {
+  .sticky-buy { bottom: calc(64px + var(--safe-b)); padding-bottom: 12px; }
+  .toast { z-index: 85; }
+}
+@media (min-width: 900px) and (max-width: 1023px) {
+  .sticky-buy { position: static; padding: 0; border: 0; background: none; }
 }
