@@ -1,0 +1,11 @@
+node_modules
+.next
+.env*.local
+.data
+public/uploads/*
+!public/uploads/.gitkeep
+next-env.d.ts
+*.tsbuildinfo
+backend/pb_data
+backend/pocketbase
+backend/pocketbase.exe

@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="1000" viewBox="0 0 800 1000">
+  <rect width="800" height="1000" fill="#F1EADF"/>
+  <path d="M -40 560 L 0 520 L 40 560 M 40 560 L 80 520 L 120 560 M 120 560 L 160 520 L 200 560 M 200 560 L 240 520 L 280 560 M 280 560 L 320 520 L 360 560 M 360 560 L 400 520 L 440 560 M 440 560 L 480 520 L 520 560 M 520 560 L 560 520 L 600 560 M 600 560 L 640 520 L 680 560 M 680 560 L 720 520 L 760 560 M 760 560 L 800 520 L 840 560 " fill="none" stroke="#7A5A3C" stroke-opacity="0.35" stroke-width="6"/>
+  <path d="M -40 600 L 0 560 L 40 600 M 40 600 L 80 560 L 120 600 M 120 600 L 160 560 L 200 600 M 200 600 L 240 560 L 280 600 M 280 600 L 320 560 L 360 600 M 360 600 L 400 560 L 440 600 M 440 600 L 480 560 L 560 600 M 560 600 L 600 560 L 600 600 M 600 600 L 640 560 L 680 600 M 680 600 L 720 560 L 760 600 M 760 600 L 800 560 L 840 600 " fill="none" stroke="#7A5A3C" stroke-opacity="0.2" stroke-width="6"/>
+  <rect x="250" y="300" width="300" height="160" fill="none" stroke="#7A5A3C" stroke-opacity="0.45" stroke-width="2"/>
+  <text x="400" y="372" text-anchor="middle" font-family="Georgia, serif" font-size="30" letter-spacing="6" fill="#7A5A3C">PLACEHOLDER</text>
+  <text x="400" y="414" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="18" letter-spacing="2" fill="#7A5A3C" fill-opacity="0.8">PRODUCT PHOTO</text>
+</svg>
